@@ -1,7 +1,7 @@
 import React from "react";
-import Logo from "../Shared/ProFast/Logo/Logo";
 import { Outlet } from "react-router";
-import authimage from "../assets/authimage.png";
+import authimage from "../../assets/authimage.png";
+import Logo from "../../Shared/ProFast/Logo/Logo";
 const AuthLayout = () => {
   return (
     <div className="sm:p-10">

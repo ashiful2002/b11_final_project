@@ -17,16 +17,20 @@ const NavbarEnd = () => {
       });
   };
   if (loading) {
-    <Loading />;
+    // return <Loading />;
   }
   return (
-    <div>
+    <div className="">
       {user ? (
-        <img src={user.photoURL} alt="" />
+        <img
+          src={
+            user.photoURL ||
+            " https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"
+          }
+          alt="User"
+          className="w-10 h-10 rounded-full"
+        />
       ) : (
-        // <button onClick={handleSignOut} className="btn">
-        //   Sign out
-        // </button>
         <Link to="/login" className="btn">
           sign in
         </Link>
@@ -36,3 +40,4 @@ const NavbarEnd = () => {
 };
 
 export default NavbarEnd;
+//
