@@ -4,11 +4,12 @@ import { useQuery } from "@tanstack/react-query";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import ParcelTable from "./parcelTable";
 import Swal from "sweetalert2";
+import { useNavigate } from "react-router";
 
 const MyParcels = () => {
   const { user } = useAuth();
   const axiosSecure = useAxiosSecure();
-
+  const navigate = useNavigate();
   const {
     data: parcels = [],
     refetch,
@@ -27,44 +28,45 @@ const MyParcels = () => {
     // You can use a modal or navigate to a detail page
   };
 
-  const handlePay = (parcel) => {
-    console.log("Initiating payment for:", parcel);
+  const handlePay = (id) => {
+    console.log("Initiating payment for:", id);
+    navigate(`/dashboard/payment/${id}`);
     // You can redirect to payment route or open modal
   };
-const handleDelete = async (id) => {
-  const result = await Swal.fire({
-    title: "Are you sure?",
-    text: "You won't be able to revert this!",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonColor: "#d33",
-    cancelButtonColor: "#3085d6",
-    confirmButtonText: "Yes, delete it!",
-  });
+  const handleDelete = async (id) => {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+    });
 
-  if (result.isConfirmed) {
-    try {
-      await axiosSecure.delete(`/parcels/${id}`);
-      refetch();
+    if (result.isConfirmed) {
+      try {
+        await axiosSecure.delete(`/parcels/${id}`);
+        refetch();
 
-      Swal.fire({
-        title: "Deleted!",
-        text: "The parcel has been deleted.",
-        icon: "success",
-      });
-    } catch (error) {
-      console.error("Delete error:", error);
-      Swal.fire("Error", "Something went wrong while deleting.", "error");
+        Swal.fire({
+          title: "Deleted!",
+          text: "The parcel has been deleted.",
+          icon: "success",
+        });
+      } catch (error) {
+        console.error("Delete error:", error);
+        Swal.fire("Error", "Something went wrong while deleting.", "error");
+      }
     }
-  }
-};
+  };
 
   if (isLoading) return <p>Loading...</p>;
 
   return (
     <div className="p-4">
       <h2 className="text-2xl font-bold mb-4">
-        📦 My Parcels ({parcels.length})
+         My Parcels ({parcels.length})
       </h2>
       <ParcelTable
         parcels={parcels}

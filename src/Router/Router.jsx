@@ -11,6 +11,7 @@ import DashboardLayout from "../Layouts/DashboardLayout/DashboardLayout";
 import MyParcels from "../Pages/Dashboard/MyParcels/MyParcels";
 import RootLayout from "../Layouts/RootLayout/RootLayout";
 import AuthLayout from "../Layouts/AuthLayout/AuthLayout";
+import Payment from "../Pages/Dashboard/MyParcels/Payment/payment";
 
 export const router = createBrowserRouter([
   {
@@ -75,6 +76,10 @@ export const router = createBrowserRouter([
       {
         path: "myParcels",
         element: <MyParcels />,
+      },
+      {
+        path: "payment/:parcelId",
+        element: <Payment />,
       },
     ],
   },

@@ -45,7 +45,7 @@ const ParcelTable = ({ parcels = [], onDelete, onView, onPay }) => {
                 {parcel.payment_status !== "paid" && (
                   <button
                     className="btn btn-xs btn-success"
-                    onClick={() => onPay(parcel)}
+                    onClick={() => onPay(parcel._id)}
                   >
                     Pay
                   </button>
