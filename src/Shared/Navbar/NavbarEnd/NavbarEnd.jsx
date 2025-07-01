@@ -22,14 +22,23 @@ const NavbarEnd = () => {
   return (
     <div className="">
       {user ? (
-        <img
-          src={
-            user.photoURL ||
-            " https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"
-          }
-          alt="User"
-          className="w-10 h-10 rounded-full"
-        />
+        <div className="flex items-center gap-4">
+          <img
+            src={
+              user.photoURL ||
+              " https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png"
+            }
+            alt="User"
+            className="w-10 h-10 rounded-full"
+          />
+
+          <button
+            onClick={handleSignOut}
+            className="btn btn-primary text-gray-800"
+          >
+            Log out
+          </button>
+        </div>
       ) : (
         <Link to="/login" className="btn">
           sign in

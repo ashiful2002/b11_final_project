@@ -1,7 +1,8 @@
 import React from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import GoogleLogin from "../SocialLogin/GoogleLogin/GoogleLogin";
+import useAuth from "../../../hooks/useAuth";
 
 const Login = () => {
   const {
@@ -10,8 +11,20 @@ const Login = () => {
     formState: { errors },
   } = useForm();
 
+  const { signin } = useAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const from = location.state?.from || "/";
+
   const onSubmit = (data) => {
-    console.log(data);
+    signin(data.email, data.password)
+      .then((result) => {
+        console.log(result);
+        navigate(from);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   return (
@@ -69,13 +82,15 @@ const Login = () => {
             </div>
           </div>
 
-          <button type="submit" className="btn btn-primary text-gray-800 mt-4 w-full">
+          <button
+            type="submit"
+            className="btn btn-primary text-gray-800 mt-4 w-full"
+          >
             Login
           </button>
         </fieldset>
       </form>
-            <GoogleLogin />
-
+      <GoogleLogin />
     </div>
   );
 };
