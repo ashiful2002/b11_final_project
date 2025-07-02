@@ -2,16 +2,48 @@ import React from "react";
 import { NavLink, Outlet } from "react-router";
 import Logo from "../../Shared/ProFast/Logo/Logo";
 import Navbar from "../../Shared/Navbar/Navbar";
+import {
+  FaHome,
+  FaBoxOpen,
+  FaMoneyCheckAlt,
+  FaUserEdit,
+  FaSearchLocation,
+} from "react-icons/fa"; // icons
 
 const DashboardLayout = () => {
   const links = (
     <>
       <Logo />
       <li>
-        <NavLink to="/dashboard"> Home</NavLink>
+        <NavLink className="flex items-center gap-2">
+          <FaHome /> Home
+        </NavLink>
       </li>
       <li>
-        <NavLink to="/dashboard/myparcels">My Parcels</NavLink>
+        <NavLink to="/dashboard/myparcels" className="flex items-center gap-2">
+          <FaBoxOpen /> My Parcels
+        </NavLink>
+      </li>
+      <li>
+        <NavLink
+          to="/dashboard/payment-history"
+          className="flex items-center gap-2"
+        >
+          <FaMoneyCheckAlt /> Payment History
+        </NavLink>
+      </li>
+      <li>
+        <NavLink to="/dashboard/track" className="flex items-center gap-2">
+          <FaSearchLocation /> Track a parcel
+        </NavLink>
+      </li>
+      <li>
+        <NavLink
+          to="/dashboard/myparcels/profile"
+          className="flex items-center gap-2"
+        >
+          <FaUserEdit /> Update Profile
+        </NavLink>
       </li>
     </>
   );
