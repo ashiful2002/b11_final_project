@@ -1,24 +1,63 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router";
 import useAuth from "../../../hooks/useAuth";
 import GoogleLogin from "../SocialLogin/GoogleLogin/GoogleLogin";
+import axios from "axios";
+import useAxios from "../../../hooks/useAxios";
 
 const Register = () => {
-  const { createUser } = useAuth();
+  const { createUser, updateUserProfile } = useAuth();
+  const [userProfilePic, setUserProfilePic] = useState("");
+  const axiosInstance = useAxios();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
 
+  const handleImageUpload = async (e) => {
+    const image = e.target.files[0];
+    const formData = new FormData();
+    formData.append("image", image);
+    const imageUploadUrl = `https://api.imgbb.com/1/upload?key=${
+      import.meta.env.VITE_IMGBB_KEY
+    }`;
+    const res = await axios.post(imageUploadUrl, formData);
+    console.log(res.data.data.url);
+    setUserProfilePic(res.data.data.url);
+  };
   const onRegister = (data) => {
     console.log(data);
     createUser(data.email, data.password)
-      .then((res) => {
+      .then(async (res) => {
         console.log(res.user);
+
+        // update user data in database
+        const userInfo = {
+          email: data.email,
+          role: "user",
+          created_at: new Date().toISOString(),
+          last_log_in: new Date().toISOString(),
+        };
+        const userRes = await axiosInstance.post("/users", userInfo);
+        console.log(userRes.data);
+
+        // update user profile in firebase
+        const updateProfile = {
+          displayName: data.name,
+          photoURL: userProfilePic,
+        };
+        updateUserProfile(updateProfile)
+          .then(() => {
+            console.log("image and name updated");
+          })
+
+          .catch((err) => {
+            console.error(err);
+          });
       })
-      .then((error) => {
+      .catch((error) => {
         console.log(error);
       });
   };
@@ -30,6 +69,29 @@ const Register = () => {
           Register as a new user
         </h1>
         <fieldset className="w-full space-y-4">
+          {/* Name field */}
+          <label className="label">User Name</label>
+          <input
+            type="text"
+            {...register("name", {
+              required: true,
+            })}
+            className="input w-full"
+            placeholder="Your Full Name"
+          />
+          {/* Image field */}
+          <label className="label">Image</label>
+          <input
+            type="file"
+            onChange={handleImageUpload}
+            // {...register("image", {
+            //   required: true,
+            // })}
+            className="input w-full cursor-pointer"
+            placeholder="Your Profile Picture"
+          />
+
+          {/* Email field */}
           <label className="label">Email</label>
           <input
             type="email"
