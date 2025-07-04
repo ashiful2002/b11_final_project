@@ -5,7 +5,7 @@ import Loading from "../../../Loading/Loading";
 const NavbarEnd = () => {
   const navigate = useNavigate();
   const { logOut, user, loading } = useAuth();
-  console.log(user);
+  // console.log(user);
 
   const handleSignOut = () => {
     logOut()
