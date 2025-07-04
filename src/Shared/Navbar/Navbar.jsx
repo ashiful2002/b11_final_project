@@ -6,6 +6,8 @@ import useAuth from "../../hooks/useAuth";
 
 const Navbar = () => {
   const { user } = useAuth();
+  console.log(user);
+  
   const links = (
     <>
       <li>

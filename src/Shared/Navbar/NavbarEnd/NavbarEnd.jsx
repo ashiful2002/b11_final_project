@@ -1,7 +1,6 @@
 import React from "react";
 import useAuth from "../../../hooks/useAuth";
 import { Link, Navigate, useNavigate } from "react-router";
-import Loading from "../../../Loading/Loading";
 const NavbarEnd = () => {
   const navigate = useNavigate();
   const { logOut, user, loading } = useAuth();

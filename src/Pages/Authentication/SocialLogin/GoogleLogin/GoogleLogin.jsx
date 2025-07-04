@@ -19,6 +19,8 @@ const GoogleLogin = () => {
         // update user data in database
         const userInfo = {
           email: user.email,
+          name: user.displayName,
+          photoURL: user.photoURL,
           role: "user",
           created_at: new Date().toISOString(),
           last_log_in: new Date().toISOString(),

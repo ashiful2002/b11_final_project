@@ -20,23 +20,29 @@ const PendingRiders = () => {
     },
   });
 
-  const handleApprove = async (id, action = "approve") => {
+  const handleDecision = async (id, action, email) => {
+    const status = action === "approve" ? "approved" : "rejected";
+
     try {
       const res = await axios.patch(
         `http://localhost:3000/riders/approve/${id}/status`,
-        { status: action === "approve" ? "approved" : "rejected" }
+        { status, email }
       );
+
       if (res.data.modifiedCount > 0) {
         Swal.fire(
-          action === "approve" ? "Approved!" : "Rejected!",
-          `Rider has been ${action === "approve" ? "approved" : "rejected"}.`,
+          `${status.charAt(0).toUpperCase() + status.slice(1)}!`,
+          `Rider has been ${status}.`,
           "success"
         );
         refetch();
-        setSelectedRider(null); // Close modal if open
+        setSelectedRider(null);
+      } else {
+        Swal.fire("No change", "Status was not updated.", "info");
       }
     } catch (error) {
-      console.error(error);
+      console.error(`${action} error:`, error);
+      Swal.fire("Error", `Failed to ${action} rider.`, "error");
     }
   };
 
@@ -55,7 +61,8 @@ const PendingRiders = () => {
         Swal.fire("Deleted!", "Rider application removed.", "success");
         refetch();
       } catch (error) {
-        console.error(error);
+        console.error("Delete error:", error);
+        Swal.fire("Error", "Failed to delete rider.", "error");
       }
     }
   };
@@ -67,7 +74,9 @@ const PendingRiders = () => {
       <h2 className="text-2xl font-bold mb-4">Pending Riders</h2>
 
       {riders.length === 0 ? (
-        <p className="text-center text-gray-500">No pending applications found.</p>
+        <p className="text-center text-gray-500">
+          No pending applications found.
+        </p>
       ) : (
         <div className="overflow-x-auto">
           <table className="table table-zebra w-full">
@@ -95,7 +104,9 @@ const PendingRiders = () => {
                     <button
                       className="btn btn-xs btn-success"
                       title="Approve"
-                      onClick={() => handleApprove(rider._id)}
+                      onClick={() =>
+                        handleDecision(rider._id, "approve", rider.email)
+                      }
                     >
                       <FaCheckCircle />
                     </button>
@@ -136,27 +147,31 @@ const PendingRiders = () => {
               <p><strong>Region:</strong> {selectedRider.region}</p>
               <p><strong>District:</strong> {selectedRider.district}</p>
               <p><strong>Status:</strong> {selectedRider.status}</p>
-              <p><strong>Submitted:</strong> {new Date(selectedRider.createdAt).toLocaleString()}</p>
+              <p>
+                <strong>Submitted:</strong>{" "}
+                {new Date(selectedRider.createdAt).toLocaleString()}
+              </p>
             </div>
 
             <div className="modal-action flex justify-between items-center">
               <button
                 className="btn btn-success"
-                onClick={() => handleApprove(selectedRider._id, "approve")}
+                onClick={() =>
+                  handleDecision(selectedRider._id, "approve", selectedRider.email)
+                }
               >
                 Approve
               </button>
               <button
                 className="btn btn-warning"
-                onClick={() => handleApprove(selectedRider._id, "reject")}
+                onClick={() =>
+                  handleDecision(selectedRider._id, "reject", selectedRider.email)
+                }
               >
                 Reject
               </button>
               <form method="dialog">
-                <button
-                  className="btn"
-                  onClick={() => setSelectedRider(null)}
-                >
+                <button className="btn" onClick={() => setSelectedRider(null)}>
                   Close
                 </button>
               </form>
