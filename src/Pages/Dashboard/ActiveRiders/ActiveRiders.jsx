@@ -70,7 +70,7 @@ const ActiveRiders = () => {
 
       <div className="overflow-x-auto">
         <table className="table table-zebra w-full text-sm md:text-base">
-          <thead className="bg-green-600 text-white">
+          <thead className="bg-green-60 bg-primary text-gray-600 ext-white">
             <tr>
               <th>#</th>
               <th>Name</th>
@@ -79,6 +79,7 @@ const ActiveRiders = () => {
               <th>Region</th>
               <th>District</th>
               <th>Joined</th>
+              <th>Status</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -92,6 +93,11 @@ const ActiveRiders = () => {
                 <td>{rider.region}</td>
                 <td>{rider.district}</td>
                 <td>{new Date(rider.createdAt).toLocaleDateString()}</td>
+                <td>
+                  <span className="badge badge-primary text-gray-700 ">
+                    {rider.status}
+                  </span>
+                </td>
                 <td>
                   <button
                     onClick={() => handleDeactivate(rider._id)}

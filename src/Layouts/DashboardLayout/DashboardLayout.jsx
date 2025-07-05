@@ -10,14 +10,19 @@ import {
   FaSearchLocation,
   FaMotorcycle,
   FaClock,
+  FaUserShield,
 } from "react-icons/fa"; // icons
+import useUserRole from "../../hooks/useUserRole";
 
 const DashboardLayout = () => {
+  const { role, roleLoading } = useUserRole();
+  console.log(role);
+
   const links = (
     <>
       <Logo />
       <li>
-        <NavLink className="flex items-center gap-2">
+        <NavLink to='/dashboard' className="flex items-center gap-2">
           <FaHome /> Home
         </NavLink>
       </li>
@@ -47,22 +52,43 @@ const DashboardLayout = () => {
           <FaUserEdit /> Update Profile
         </NavLink>
       </li>
-      <li>
-        <NavLink
-          to="/dashboard/active-riders"
-          className="flex items-center gap-2"
-        >
-          <FaMotorcycle /> Active Riders
-        </NavLink>
-      </li>
-      <li>
-        <NavLink
-          to="/dashboard/pending-riders"
-          className="flex items-center gap-2"
-        >
-          <FaClock /> Pending Riders
-        </NavLink>
-      </li>
+      {!roleLoading && role === "admin" && (
+        <>
+          <li>
+            <NavLink
+              to="/dashboard/assign-riders"
+              className="flex items-center gap-2"
+            >
+              <FaMotorcycle /> Assign Rider
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              to="/dashboard/active-riders"
+              className="flex items-center gap-2"
+            >
+              <FaMotorcycle /> Active Riders
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              to="/dashboard/pending-riders"
+              className="flex items-center gap-2"
+            >
+              <FaClock /> Pending Riders
+            </NavLink>
+          </li>
+          {/* admin routes */}
+          <li>
+            <NavLink
+              to="/dashboard/make-admin"
+              className="flex items-center gap-2"
+            >
+              <FaUserShield /> Make Admin
+            </NavLink>
+          </li>
+        </>
+      )}
     </>
   );
   return (
