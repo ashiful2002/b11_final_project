@@ -11,6 +11,11 @@ import {
   FaMotorcycle,
   FaClock,
   FaUserShield,
+  FaBluetoothB,
+  FaTruckLoading,
+  FaCheckDouble,
+  FaCheck,
+  FaWallet,
 } from "react-icons/fa"; // icons
 import useUserRole from "../../hooks/useUserRole";
 
@@ -22,7 +27,7 @@ const DashboardLayout = () => {
     <>
       <Logo />
       <li>
-        <NavLink to='/dashboard' className="flex items-center gap-2">
+        <NavLink to="/dashboard" className="flex items-center gap-2">
           <FaHome /> Home
         </NavLink>
       </li>
@@ -52,6 +57,39 @@ const DashboardLayout = () => {
           <FaUserEdit /> Update Profile
         </NavLink>
       </li>
+
+      {/* rider nav */}
+      {!roleLoading && role === "rider" && (
+        <>
+          <li>
+            <NavLink
+              to="/dashboard/pending-deliveries"
+              className="flex items-center gap-2"
+            >
+              <FaTruckLoading /> Pending Deliveries
+            </NavLink>
+          </li>
+
+          <li>
+            <NavLink
+              to="/dashboard/completed-deliveries"
+              className="flex items-center gap-2"
+            >
+              <FaCheck /> Completed Deliveries
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              to="/dashboard/my-earning"
+              className="flex items-center gap-2"
+            >
+              <FaWallet /> My Earning
+            </NavLink>
+          </li>
+        </>
+      )}
+
+      {/* admin navbar */}
       {!roleLoading && role === "admin" && (
         <>
           <li>

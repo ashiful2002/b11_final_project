@@ -1,13 +1,23 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Loading from "../../../Loading/Loading";
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
+import Swal from "sweetalert2";
+import useTrackingLogger from "../../../hooks/useTrackingLogger";
+import useAuth from "../../../hooks/useAuth";
 
 const AssignRider = () => {
+  const axiosSecure = useAxiosSecure();
+  const queryClient = useQueryClient();
+  const [selectedRider, setSelectedRider] = useState(null);
   const [selectedParcel, setSelectedParcel] = useState(null);
   const [riders, setRiders] = useState([]);
   const [isLoadingRiders, setIsLoadingRiders] = useState(false);
+  const { user } = useAuth();
+  const { logTracking } = useTrackingLogger();
 
+  // ✅ Fetch assignable parcels
   const {
     data: parcels = [],
     isLoading,
@@ -15,7 +25,7 @@ const AssignRider = () => {
   } = useQuery({
     queryKey: ["assignableParcels"],
     queryFn: async () => {
-      const res = await axios.get("http://localhost:3000/parcels", {
+      const res = await axios.get("https://zap-shift-server-sandy.vercel.app/parcels", {
         params: {
           payment_status: "paid",
           delivery_status: "not_collected",
@@ -28,47 +38,69 @@ const AssignRider = () => {
     },
   });
 
+  // Load available riders for selected parcel
   const handleAssignClick = async (parcel) => {
     setSelectedParcel(parcel);
     setIsLoadingRiders(true);
-    console.log(parcel.senderServiceCenter);
 
     try {
-      const res = await axios.get("http://localhost:3000/riders/available", {
+      const res = await axiosSecure.get("/riders/available", {
         params: {
           district: parcel.senderServiceCenter,
         },
       });
       setRiders(res.data);
     } catch (error) {
-      console.error("Failed to load riders", error);
-      setRiders([]);
+      console.error("Failed to load riders", error.message);
+      Swal.fire("Error!", "Failed to load riders", "error");
     } finally {
       setIsLoadingRiders(false);
     }
   };
 
-  if (isLoading) return <Loading />;
-
-  const handleAssignRider = async (riderId) => {
-    try {
-      const res = await axiosSecure.patch("/assign-rider", {
-        parcelId: selectedParcel._id,
-        riderId: riderId,
+  //  Mutation to assign rider
+  const assignRiderMutation = useMutation({
+    mutationFn: async ({ parcelId, rider }) => {
+      setSelectedRider(rider);
+      const res = await axiosSecure.patch(`/parcels/${parcelId}/assign`, {
+        riderId: rider._id,
+        riderEmail: rider.email,
+        riderName: rider.name,
       });
-
-      if (res.data?.parcelUpdated && res.data?.riderUpdated) {
+      return res.data;
+    },
+    onSuccess: async (data) => {
+      console.log(data.riderUpdated);
+      // && data?.riderUpdated
+      if (data?.parcelUpdated) {
         Swal.fire("Success", "Rider assigned successfully", "success");
-        setSelectedParcel(null); // Close modal
-        refetch(); // Refetch parcel list
+
+        // track rider assigned
+
+        await logTracking({
+          tracking_id: selectedParcel.tracking_id,
+          status: "Rider_assigned",
+          details: `assigned to ${selectedRider.name}`,
+          updated_by: user.email,
+        });
+        setSelectedParcel(null);
+        refetch(); // Refetch updated parcels
+        console.log(data);
       } else {
-        Swal.fire("Warning", "Assignment not completed properly", "warning");
+        console.log(data);
+        // error comming from here
       }
-    } catch (err) {
+    },
+    onError: (err) => {
       console.error("Assign error:", err);
+      console.log("confirm error", err);
+
       Swal.fire("Error", "Failed to assign rider", "error");
-    }
-  };
+    },
+  });
+
+  // ✅ Loading state
+  if (isLoading) return <Loading />;
 
   return (
     <div className="p-6">
@@ -154,7 +186,13 @@ const AssignRider = () => {
                       <p className="text-sm text-gray-500">{rider.phone}</p>
                     </div>
                     <button
-                      onClick={() => handleAssignRider(rider._id)}
+                      onClick={() =>
+                        assignRiderMutation.mutate({
+                          parcelId: selectedParcel._id,
+                          // riderId: rider._id,
+                          rider,
+                        })
+                      }
                       className="btn btn-sm btn-success"
                     >
                       Confirm Assign

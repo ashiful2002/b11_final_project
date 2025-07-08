@@ -5,6 +5,7 @@ import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import ParcelTable from "./parcelTable";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router";
+import Loading from "../../../Loading/Loading";
 
 const MyParcels = () => {
   const { user } = useAuth();
@@ -18,10 +19,10 @@ const MyParcels = () => {
     queryKey: ["my-parcels", user.email],
     enabled: !!user?.email,
     queryFn: async () => {
-      const res = await axiosSecure.get(`/parcels?email=${user.email}`,{
+      const res = await axiosSecure.get(`/parcels?email=${user.email}`, {
         headers: {
-          Authorization: `Bearer ${user.accessToken}`
-        }
+          Authorization: `Bearer ${user.accessToken}`,
+        },
       });
       return res.data;
     },
@@ -65,13 +66,11 @@ const MyParcels = () => {
     }
   };
 
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading) return <Loading />;
 
   return (
     <div className="p-4">
-      <h2 className="text-2xl font-bold mb-4">
-         My Parcels ({parcels.length})
-      </h2>
+      <h2 className="text-2xl font-bold mb-4">My Parcels ({parcels.length})</h2>
       <ParcelTable
         parcels={parcels}
         onView={handleView}

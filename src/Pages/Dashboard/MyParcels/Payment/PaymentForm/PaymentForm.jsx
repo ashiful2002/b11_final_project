@@ -14,7 +14,7 @@ const PaymentForm = () => {
   const elements = useElements();
   const [error, setError] = useState("");
   const { parcelId } = useParams();
-  console.log(parcelId);
+  // console.log(parcelId);
   const axiosSecure = useAxiosSecure();
   // useing transetc query
   const navigate = useNavigate();
@@ -95,14 +95,14 @@ const PaymentForm = () => {
 
           if (paymentRes.data.insertedId) {
             console.log("pament successfull");
-            // ✅ SweetAlert
+            //  SweetAlert
             Swal.fire({
               title: "Payment Successful!",
               text: `Transaction ID: ${result.paymentIntent.id}`,
               icon: "success",
               confirmButtonText: "Go to My Parcels",
             }).then(() => {
-              // ✅ Redirect after confirmation
+              //  Redirect after confirmation
               navigate("/dashboard/myParcels");
             });
           }

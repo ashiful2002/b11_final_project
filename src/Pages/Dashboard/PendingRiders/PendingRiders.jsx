@@ -15,7 +15,7 @@ const PendingRiders = () => {
   } = useQuery({
     queryKey: ["pendingRiders"],
     queryFn: async () => {
-      const res = await axios.get("http://localhost:3000/riders/pending");
+      const res = await axios.get("https://zap-shift-server-sandy.vercel.app/riders/pending");
       return res.data;
     },
   });
@@ -25,7 +25,7 @@ const PendingRiders = () => {
 
     try {
       const res = await axios.patch(
-        `http://localhost:3000/riders/approve/${id}/status`,
+        `https://zap-shift-server-sandy.vercel.app/riders/approve/${id}/status`,
         { status, email }
       );
 
@@ -57,7 +57,7 @@ const PendingRiders = () => {
 
     if (confirm.isConfirmed) {
       try {
-        await axios.delete(`http://localhost:3000/riders/${id}`);
+        await axios.delete(`https://zap-shift-server-sandy.vercel.app/riders/${id}`);
         Swal.fire("Deleted!", "Rider application removed.", "success");
         refetch();
       } catch (error) {

@@ -7,13 +7,13 @@ import { AiOutlineStop, AiTwotoneStop } from "react-icons/ai";
 
 const fetchUserByEmail = async (email) => {
   const res = await axios.get(
-    `http://localhost:3000/users/search?email=${email}`
+    `https://zap-shift-server-sandy.vercel.app/users/search?email=${email}`
   );
   return res.data;
 };
 
 const promoteToAdmin = async (userId) => {
-  const res = await axios.patch(`http://localhost:3000/users/${userId}/role`, {
+  const res = await axios.patch(`https://zap-shift-server-sandy.vercel.app/users/${userId}/role`, {
     role: "admin",
   });
   return res.data;
@@ -56,7 +56,7 @@ const MakeAdmin = () => {
   };
   const handleRemoveAdmin = async (id) => {
     try {
-      const res = await axios.patch(`http://localhost:3000/users/${id}/role`, {
+      const res = await axios.patch(`https://zap-shift-server-sandy.vercel.app/users/${id}/role`, {
         role: "user",
       });
 

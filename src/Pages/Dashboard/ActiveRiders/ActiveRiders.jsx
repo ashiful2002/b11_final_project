@@ -26,7 +26,7 @@ const ActiveRiders = () => {
     queryKey: ["activeRiders", debouncedSearch],
     queryFn: async () => {
       const res = await axios.get(
-        `http://localhost:3000/riders/approved?name=${debouncedSearch}`
+        `https://zap-shift-server-sandy.vercel.app/riders/approved?name=${debouncedSearch}`
       );
       return res.data;
     },
@@ -42,7 +42,7 @@ const ActiveRiders = () => {
     });
 
     if (confirm.isConfirmed) {
-      await axios.patch(`http://localhost:3000/riders/${id}/deactivate`);
+      await axios.patch(`https://zap-shift-server-sandy.vercel.app/riders/${id}/deactivate`);
       Swal.fire("Deactivated!", "Rider has been deactivated.", "success");
       refetch();
     }
